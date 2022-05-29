@@ -37,7 +37,6 @@ class Form extends React.Component {
 
   handleValidations = (type, value) => {
     let errorText;
-    // let errroCheck = false
     switch(type) {
       case "card":
         errorText = cardNumberValidation(value);
@@ -48,23 +47,19 @@ class Form extends React.Component {
               cardError: errorText,
             },
         }));
-        
         return errorText;
-        // break;
       case "cardHolder":
         errorText = onlyTextValidation(value)
         this.setState((prevState) => ({
           error: {...prevState.error, cardHolderError: errorText}
         }))
         return errorText;
-        // break;
       case "expiry":
         errorText = cardExpireValidation(value)
         this.setState((prevState) => ({
           error: {...prevState.error, expiryError: errorText}
         }))
         return errorText;
-
         // break;
       case "securityCode":
         errorText = securityCodeValidation(3, value)
@@ -72,8 +67,6 @@ class Form extends React.Component {
           error: {...prevState.error, securityCodeError: errorText}
         }))
         return errorText;
-
-        // break;
       default:
         break;
     }
@@ -109,7 +102,7 @@ class Form extends React.Component {
   }
 
   checkErrorBeforeSave = () => {
-    const {cardData, error} = this.state
+    const {cardData} = this.state
     console.log("card data", cardData)
     let errorValue = {};
     let isError = false;
@@ -117,14 +110,13 @@ class Form extends React.Component {
       if (!cardData[val].length) {
         errorValue = {...errorValue, [`${val}Error`]: "Required"}
         isError = true;
-        // console.log("type, value", cardData[val])
-      
       } else {
         let key = Object.keys(cardData).find(key => cardData[key] === cardData[val]);
-        console.log("funct", this.handleValidations(key, cardData[val]))
-          if (this.handleValidations(key, cardData[val])) {
-
-              errorValue = {...errorValue, [`${val}Error`]: "Wrong input"}
+        let errorValidator = this.handleValidations(key, cardData[val])
+       
+          if (errorValidator) {
+              console.log("funct", errorValidator)
+              errorValue = {...errorValue, [`${val}Error`]: errorValidator}
               isError = true;
          }
       }
