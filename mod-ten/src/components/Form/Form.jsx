@@ -102,7 +102,7 @@ class Form extends React.Component {
   }
 
   checkErrorBeforeSave = () => {
-    const {cardData} = this.state
+    const {cardData, error} = this.state
     console.log("card data", cardData)
     let errorValue = {};
     let isError = false;
@@ -111,18 +111,23 @@ class Form extends React.Component {
         errorValue = {...errorValue, [`${val}Error`]: "Required"}
         isError = true;
       } else {
-        let key = Object.keys(cardData).find(key => cardData[key] === cardData[val]);
-        let errorValidator = this.handleValidations(key, cardData[val])
-       
-          if (errorValidator) {
-              console.log("funct", errorValidator)
-              errorValue = {...errorValue, [`${val}Error`]: errorValidator}
-              isError = true;
-         }
+        Object.keys(error).forEach((val) => {
+          if (error(val)) {
+            isError = true;
+          }
+        });
+        this.setState({ error: errorValue });
+        Object.keys(cardData).forEach((val) => {
+          if (cardData[val].length) {
+            this.handleValidations(val, cardData[val]);
+          }
+        })
+        return isError
       }
     });
     this.setState({ error: errorValue });
     return isError
+
   }
 
   handleAddCard = (e) => {
@@ -182,3 +187,13 @@ class Form extends React.Component {
 }
 
 export default Form;
+
+      // else {
+      //   let key = Object.keys(cardData).find(key => cardData[key] === cardData[val]);
+      //   let errorValidator = this.handleValidations(key, cardData[val])
+      //     if (errorValidator) {
+      //         console.log("funct", errorValidator)
+      //         errorValue = {...errorValue, [`${val}Error`]: errorValidator}
+      //         isError = true;
+      //    }
+      // }
